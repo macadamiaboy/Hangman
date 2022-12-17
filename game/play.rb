@@ -3,10 +3,10 @@
 class Hangman
 
   def initialize
-    @letters = ('a'..'z').to_a
     @word = words.sample
     @lives = 7
     @letters_left = @word.size
+    @guessed_letters = ""
   end
 
   def put_letters(letter, keyword, array)
@@ -15,19 +15,27 @@ class Hangman
       if keyword[index] == letter
         array[index] = "#{letter} "
         @letters_left -= 1
+        @guessed_letters += letter.to_s
       end
       index += 1
     end
+  end
+
+  def print_array(array)
+    array.each do |element|
+      print element
+    end
+    puts ""
   end
 
   def print_teaser
     @word_performer = []
 
     @word.size.times do
-      @word_performer << "_"
+      @word_performer << "_ "
     end
 
-    puts @word_performer
+    print_array(@word_performer)
   end
 
   def make_guess
@@ -37,14 +45,12 @@ class Hangman
       puts "Enter a letter"
       guess = gets.chomp
 
-      if guess.size != 1
-        puts "You should type only one letter"
+      if guess.size != 1 || @guessed_letters.include?(guess)
+        puts "Think twice before your input"
         make_guess
-      end
-
-      if @word.include? guess
+      elsif @word.include? guess
         put_letters(guess, @word, @word_performer)
-        puts @word_performer
+        print_array(@word_performer)
         make_guess
       else
         @lives -= 1
